@@ -25,6 +25,7 @@ cp ../kubernetes-knative/${PWD##*/}-knative/templates/${PWD##*/}-gateway.yml   c
 sed -i  '1,/^---$/d'  charts/${PWD##*/}/templates/${PWD##*/}-gateway.yaml
 sed -i '/gateways:/,/http:/{/gateways:/!{/http:/!d;};}' charts/${PWD##*/}/templates/${PWD##*/}-gateway.yaml
 echo -e '    - knative-serving/cluster-local-gateway\n    - knative-serving/knative-ingress-gateway' | sed -i '/gateways:/r /dev/stdin' charts/${PWD##*/}/templates/${PWD##*/}-gateway.yaml
+sed -i '/hosts:/s/    -.*/{{ .Values.service.name }}.{{ .Release.Namespace }}.{{ .Values.jxRequirements.ingress.domain }}/' charts/${PWD##*/}/templates/${PWD##*/}-gateway.yaml
 sed -i '/route:/,/\- match:/{/route:/!{/- match:/!d;};}' charts/${PWD##*/}/templates/${PWD##*/}-gateway.yaml
 cat > /tmp/HereFile <<HEREDOC
       rewrite:
@@ -39,6 +40,10 @@ HEREDOC
 sed -i '/route:.*/r /tmp/Herefile' charts/${PWD##*/}/templates/${PWD##*/}-gateway.yaml
 # below is to replace route:rewrite: lines
 sed -i '/      route:$/{$!{N;s/      route:\n      rewrite:/      rewrite:/;ty;P;D;:y}}' charts/${PWD##*/}/templates/${PWD##*/}-gateway.yaml
+# delete namespace: metadata row, as it is autopopulated by jx based on environment
+sed -i  '/namespace: /d' charts/${PWD##*/}/templates/${PWD##*/}-gateway.yaml
+# replace hosts: with dynamic host domain
+sed -i "/^  hosts:$/N;s/  hosts:\n    - .*/  host:\n    - {{ .Values.service.name }}.{{ .Release.Namespace }}.{{ .Values.jxRequirements.ingress.domain }}/" charts/${PWD##*/}/templates/${PWD##*/}-gateway.yaml
 
 ## below is also working
 #sed -i -e  '/route:/{

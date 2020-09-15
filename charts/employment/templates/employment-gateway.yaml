@@ -2,12 +2,11 @@ apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
 metadata:
   name: employment-gw-virtualservice
-  namespace: jhipster
   labels:
     service: employment-gw-virtualservice
 spec:
-  hosts:
-    - employment.jhipster.cluster12.tagscloud.org
+  host:
+    - {{ .Values.service.name }}.{{ .Release.Namespace }}.{{ .Values.jxRequirements.ingress.domain }}
   gateways:
     - knative-serving/cluster-local-gateway
     - knative-serving/knative-ingress-gateway
