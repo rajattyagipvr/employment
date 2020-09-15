@@ -52,18 +52,18 @@ fi
 cp ../kubernetes-knative/${PWD##*/}-knative/requirements.yml  charts/${PWD##*/}/requirements.yaml
 
 ## add the values from jhipster to jx charts
-if [ -f charts/${PWD##*/}/values.yaml.backup ] ; then
-cp charts/${PWD##*/}/values.yaml.backup charts/${PWD##*/}/values.yaml
+if [ -f charts/values.yaml.backup ] ; then
+cp charts/values.yaml.backup charts/${PWD##*/}/values.yaml
 fi
-cp charts/${PWD##*/}/values.yaml charts/${PWD##*/}/values.yaml.backup
+cp charts/${PWD##*/}/values.yaml charts/values.yaml.backup
 cat ../kubernetes-knative/${PWD##*/}-knative/values.yml >> charts/${PWD##*/}/values.yaml
 
 
 ## add the env variables of jhipster to k8s charts
-if [ -f charts/${PWD##*/}/templates/ksvc.yaml.backup ] ; then
-cp charts/${PWD##*/}/templates/ksvc.yaml.backup charts/${PWD##*/}/templates/ksvc.yaml
+if [ -f charts/ksvc.yaml.backup ] ; then
+cp charts/ksvc.yaml.backup charts/${PWD##*/}/templates/ksvc.yaml
 fi
-cp charts/${PWD##*/}/templates/ksvc.yaml charts/${PWD##*/}/templates/ksvc.yaml.backup
+cp charts/${PWD##*/}/templates/ksvc.yaml charts/ksvc.yaml.backup
 sed -n '/env:/,/resources:/{/env:/!{/resources:/!p;};}' ../kubernetes-knative/${PWD##*/}-knative/templates/${PWD##*/}-service.yml |  sed  's/^    //'   | sed 's/\..*\.svc/\.{{ \.Release\.Namespace }}\.svc/g' | sed -i '/env:/r /dev/stdin' charts/${PWD##*/}/templates/ksvc.yaml
 
 
