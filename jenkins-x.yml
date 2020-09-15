@@ -1,1 +1,36 @@
 buildPack: gradle
+pipelineConfig:
+  pipelines:
+    overrides:
+      - name: gradle-build
+        type: replace
+        #pipeline: release # as both for release and pullrequest pipeleines
+        stage: build
+        steps:
+          - name: chmod
+            image: jhipster/jhipster:v6.9.0
+            command: echo jhipster | sudo -S chmod +777 ./
+          - name: chmod gradlew
+            image: jhipster/jhipster:v6.9.0
+            command: echo jhipster | sudo -S chmod +x gradlew
+          # - name: clean-webpack
+          #   image: jhipster/jhipster:v6.9.0
+          #   command: ./gradlew -ntp clean -P-webpack
+          # - name: install-tools
+          #   image: jhipster/jhipster:v6.9.0
+          #   command: ./gradlew -ntp com.github.eirslett:frontend-maven-plugin:install-node-and-npm -DnodeVersion=v12.16.1 -DnpmVersion=6.14.5
+          # - name: install-npm
+          #   image: jhipster/jhipster:v6.9.0
+          #   command: ./gradlew -ntp com.github.eirslett:frontend-maven-plugin:npm
+          - name: package
+            image: jhipster/jhipster:v6.9.0
+            #command: ./mvnw -ntp verify -P-webpack -Pprod -DskipTests
+            # for testing below
+            command: ./gradlew bootJar -x test -Pprod -PnodeInstall --no-daemon
+            env:
+              - name: _JAVA_OPTIONS
+                value: -XX:+UnlockExperimentalVMOptions
+                  -Dsun.zip.disableMemoryMapping=true -XX:+UseParallelGC -XX:MinHeapFreeRatio=5
+                  -XX:MaxHeapFreeRatio=10 -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90
+                  -Xms100m -Xmx800m
+

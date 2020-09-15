@@ -25,13 +25,34 @@ cp ../kubernetes-knative/${PWD##*/}-knative/templates/${PWD##*/}-gateway.yml   c
 sed -i  '1,/^---$/d'  charts/${PWD##*/}/templates/${PWD##*/}-gateway.yaml
 sed -i '/gateways:/,/http:/{/gateways:/!{/http:/!d;};}' charts/${PWD##*/}/templates/${PWD##*/}-gateway.yaml
 echo -e '    - knative-serving/cluster-local-gateway\n    - knative-serving/knative-ingress-gateway' | sed -i '/gateways:/r /dev/stdin' charts/${PWD##*/}/templates/${PWD##*/}-gateway.yaml
+sed -i '/route:/,/\- match:/{/route:/!{/- match:/!d;};}' charts/${PWD##*/}/templates/${PWD##*/}-gateway.yaml
+cat > /tmp/HereFile <<HEREDOC
+      rewrite:
+        authority: {{ .Values.service.name .Release.Namespace Values.jxRequirements.ingress.domain }}
+        uri: /
+      route:
+        - destination:
+            host: istio-ingressgateway.istio-system.svc.cluster.local
+            port:
+              number: 80
+HEREDOC
+sed -i '/route:.*/r /tmp/Herefile' charts/${PWD##*/}/templates/${PWD##*/}-gateway.yaml
+# below is to replace route:rewrite: lines
+sed -i '/      route:$/{$!{N;s/      route:\n      rewrite:/      rewrite:/;ty;P;D;:y}}' charts/${PWD##*/}/templates/${PWD##*/}-gateway.yaml
+
+## below is also working
+#sed -i -e  '/route:/{
+#    i
+#    e cat  /tmp/HereFile ## using exec cat instead of r readFileName
+#    }' -e '/^$/d'  charts/${PWD##*/}/templates/${PWD##*/}-gateway.yaml
+rm /tmp/HereFile
 fi
 
 ## copy the requirements.yaml depdendencies from jhipster k8s manifests to jx charts
 cp ../kubernetes-knative/${PWD##*/}-knative/requirements.yml  charts/${PWD##*/}/requirements.yaml
 
 ## add the values from jhipster to jx charts
-if [ -f charts/${PWD##*/}/values.yaml.backup ]
+if [ -f charts/${PWD##*/}/values.yaml.backup ] ; then
 cp charts/${PWD##*/}/values.yaml.backup charts/${PWD##*/}/values.yaml
 fi
 cp charts/${PWD##*/}/values.yaml charts/${PWD##*/}/values.yaml.backup
@@ -39,7 +60,7 @@ cat ../kubernetes-knative/${PWD##*/}-knative/values.yml >> charts/${PWD##*/}/val
 
 
 ## add the env variables of jhipster to k8s charts
-if [ -f charts/${PWD##*/}/templates/ksvc.yaml.backup ]
+if [ -f charts/${PWD##*/}/templates/ksvc.yaml.backup ] ; then
 cp charts/${PWD##*/}/templates/ksvc.yaml.backup charts/${PWD##*/}/templates/ksvc.yaml
 fi
 cp charts/${PWD##*/}/templates/ksvc.yaml charts/${PWD##*/}/templates/ksvc.yaml.backup
@@ -69,13 +90,11 @@ sed -n '/env:/,/resources:/{/env:/!{/resources:/!p;};}' ../kubernetes-knative/${
 
 
 ## update the jenkins-x.yaml with custom overrides
-if [ -f jenkins-x.yml.backup ]
+if [ -f jenkins-x.yml.backup ] ; then
 cp jenkins-x.yml.backup jenkins-x.yml
 fi
 cp jenkins-x.yml jenkins-x.yml.backup
-echo -n "\n
-buildPack: gradle
-pipelineConfig:
+echo -e "pipelineConfig:
   pipelines:
     overrides:
       - name: gradle-build
