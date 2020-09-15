@@ -28,7 +28,7 @@ echo -e '    - knative-serving/cluster-local-gateway\n    - knative-serving/knat
 sed -i '/route:/,/\- match:/{/route:/!{/- match:/!d;};}' charts/${PWD##*/}/templates/${PWD##*/}-gateway.yaml
 cat > /tmp/HereFile <<HEREDOC
       rewrite:
-        authority: {{ .Values.service.name .Release.Namespace Values.jxRequirements.ingress.domain }}
+        authority: {{ .Values.service.name }}.{{ .Release.Namespace }}.{{ .Values.jxRequirements.ingress.domain }}
         uri: /
       route:
         - destination:
