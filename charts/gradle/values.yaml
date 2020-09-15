@@ -11,7 +11,7 @@ image:
 env:
 
 # enable this flag to use knative serve to deploy the app
-knativeDeploy: true
+knativeDeploy: false
 
 # HorizontalPodAutoscaler
 hpa:
@@ -93,23 +93,3 @@ jxRequirements:
     # shared ingress annotations on all services
     annotations:
     #  kubernetes.io/ingress.class: nginx
-
-mysql:
-  enabled: true
-  mysqlDatabase: employment
-  mysqlAllowEmptyPassword: true
-  podAnnotations:
-    sidecar.istio.io/inject: 'false'
-  initializationFiles:
-    grant.sql: |-
-      grant all privileges on *.* to root@'%' identified by '' with grant option;
-mysql:
-  enabled: true
-  mysqlDatabase: employment
-  mysqlAllowEmptyPassword: true
-  podAnnotations:
-    sidecar.istio.io/inject: 'false'
-  initializationFiles:
-    grant.sql: |-
-      grant all privileges on *.* to root@'%' identified by '' with grant option;
-

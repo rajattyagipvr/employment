@@ -23,20 +23,7 @@ spec:
             - name: JHIPSTER_SECURITY_AUTHENTICATION_JWT_BASE64_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: jwt-secret-employment
-                  key: secret
-            - name: SPRING_DATASOURCE_URL
-              value: jdbc:mysql://employment-mysql.{{ .Release.Namespace }}.svc.cluster.local:3306/employment?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true
-            - name: SPRING_SLEUTH_PROPAGATION_KEYS
-              value: 'x-request-id,x-ot-span-context'
-            - name: JAVA_OPTS
-              value: ' -Xmx256m -Xms256m'
-            - name: SPRING_PROFILES_ACTIVE
-              value: prod
-            - name: JHIPSTER_SECURITY_AUTHENTICATION_JWT_BASE64_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: jwt-secret-employment
+                  name: jwt-secret
                   key: secret
             - name: SPRING_DATASOURCE_URL
               value: jdbc:mysql://employment-mysql.{{ .Release.Namespace }}.svc.cluster.local:3306/employment?useUnicode=true&characterEncoding=utf8&useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC&createDatabaseIfNotExist=true

@@ -17,7 +17,7 @@
 ## copy the jh jwt secrets file once for a micro service. same can be used by all
 cp ../kubernetes-knative/${PWD##*/}-knative/templates/jwt-secret.yml   charts/${PWD##*/}/templates/jwt-secret.yaml
 sed -i  '/namespace: /d' charts/${PWD##*/}/templates/jwt-secret.yaml
-
+sed -i "s/name: jwt-secret/name: jwt-secret-${PWD##*/}/" charts/${PWD##*/}/templates/jwt-secret.yaml
 ## copy the common gateway and virtualservice files
 # also amend details in the file
 if [ -f ../kubernetes-knative/${PWD##*/}-knative/templates/${PWD##*/}-gateway.yml ] ; then
@@ -65,10 +65,9 @@ cp charts/ksvc.yaml.backup charts/${PWD##*/}/templates/ksvc.yaml
 fi
 cp charts/${PWD##*/}/templates/ksvc.yaml charts/ksvc.yaml.backup
 sed -n '/env:/,/resources:/{/env:/!{/resources:/!p;};}' ../kubernetes-knative/${PWD##*/}-knative/templates/${PWD##*/}-service.yml |  sed  's/^    //'   | sed 's/\..*\.svc/\.{{ \.Release\.Namespace }}\.svc/g' | sed -i '/env:/r /dev/stdin' charts/${PWD##*/}/templates/ksvc.yaml
-
+sed -i "s/name: jwt-secret/name: jwt-secret-${PWD##*/}/" charts/${PWD##*/}/templates/ksvc.yaml
 
 ### Also to work with knative and istio you need to update the gateway for store for all the services as below
-##
 # spec:
 #   gateways:
 #   - knative-serving/cluster-local-gateway

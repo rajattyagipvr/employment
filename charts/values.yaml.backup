@@ -103,13 +103,3 @@ mysql:
   initializationFiles:
     grant.sql: |-
       grant all privileges on *.* to root@'%' identified by '' with grant option;
-mysql:
-  enabled: true
-  mysqlDatabase: employment
-  mysqlAllowEmptyPassword: true
-  podAnnotations:
-    sidecar.istio.io/inject: 'false'
-  initializationFiles:
-    grant.sql: |-
-      grant all privileges on *.* to root@'%' identified by '' with grant option;
-
