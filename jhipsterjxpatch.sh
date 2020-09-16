@@ -43,7 +43,7 @@ sed -i '/      route:$/{$!{N;s/      route:\n      rewrite:/      rewrite:/;ty;P
 # delete namespace: metadata row, as it is autopopulated by jx based on environment
 sed -i  '/namespace: /d' charts/${PWD##*/}/templates/${PWD##*/}-gateway.yaml
 # replace hosts: with dynamic host domain
-sed -i "/^  hosts:$/N;s/  hosts:\n    - .*/  host:\n    - {{ .Values.service.name }}.{{ .Release.Namespace }}.{{ .Values.jxRequirements.ingress.domain }}/" charts/${PWD##*/}/templates/${PWD##*/}-gateway.yaml
+sed -i "/^  hosts:$/N;s/  hosts:\n    - .*/  hosts:\n    - {{ .Values.service.name }}.{{ .Release.Namespace }}.{{ .Values.jxRequirements.ingress.domain }}/" charts/${PWD##*/}/templates/${PWD##*/}-gateway.yaml
 
 ## below is also working
 #sed -i -e  '/route:/{
