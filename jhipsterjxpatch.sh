@@ -43,7 +43,11 @@ sed -i '/      route:$/{$!{N;s/      route:\n      rewrite:/      rewrite:/;ty;P
 # delete namespace: metadata row, as it is autopopulated by jx based on environment
 sed -i  '/namespace: /d' charts/${PWD##*/}/templates/${PWD##*/}-gateway.yaml
 # replace hosts: with dynamic host domain
-sed -i "/^  hosts:$/N;s/  hosts:\n    - .*/  hosts:\n    - {{ .Values.service.name }}.{{ .Release.Namespace }}.{{ .Values.jxRequirements.ingress.domain }}/" charts/${PWD##*/}/templates/${PWD##*/}-gateway.yaml
+sed -i "/^  hosts:$/$!N;s/  hosts:\n    - .*/  hosts:\n    - {{ .Values.service.name }}.{{ .Release.Namespace }}.{{ .Values.jxRequirements.ingress.domain }}/" charts/${PWD##*/}/templates/${PWD##*/}-gateway.yaml
+#update rewrite authority, with one from prefix
+#  sample ----> sed '$!N;s/\(foo\n\)#\(bar\)/\1\2/;P;D' infile
+sed -i '/prefix: .*/{$!N};$!N;s/\/services\/\(.*\)\/\n\(.*\)\n        authority: .*}}\.{{ \.Release/\/services\/\1\/\n\2\n        authority: \1\.{{ \.Release/;P;D' charts/${PWD##*/}/templates/${PWD##*/}-gateway.yaml
+
 
 ## below is also working
 #sed -i -e  '/route:/{

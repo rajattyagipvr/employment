@@ -15,7 +15,7 @@ spec:
         - uri:
             prefix: /services/dummy/
       rewrite:
-        authority: {{ .Values.service.name }}.{{ .Release.Namespace }}.{{ .Values.jxRequirements.ingress.domain }}
+        authority: dummy.{{ .Release.Namespace }}.{{ .Values.jxRequirements.ingress.domain }}
         uri: /
       route:
         - destination:
